@@ -12,6 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Students;
+using Domain.Abstractrions;
+using Persistence;
 
 namespace Demo
 {
@@ -29,11 +32,12 @@ namespace Demo
         {
             services.AddControllersWithViews();
             services.AddTransient<IServiceA, ServiceA>();
-            services.AddScoped<IServiceA, ServiceA1>();
-            services.AddSingleton<IServiceA, ServiceA2>();
             var assembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(assembly)));
+            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IUnitOfWork, EfUnitOfWork>();
+            services.AddScoped<IRepository, EfRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

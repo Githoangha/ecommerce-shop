@@ -1,4 +1,5 @@
-﻿using Demo.Models;
+﻿using Application.Students;
+using Demo.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,17 +13,25 @@ namespace Demo.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IStudentService _studentService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger,IStudentService studentService)
         {
             _logger = logger;
+            _studentService = studentService;
         }
 
-        public IActionResult Index()
+        //public IActionResult Index()
+        //{
+        //    var students = _studentService.GetStudents();
+
+        //    return View(students);
+        //}
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var students =await _studentService.GetStudentsAsync();
+            return View(students);
         }
-
         public IActionResult Privacy()
         {
             return View();
