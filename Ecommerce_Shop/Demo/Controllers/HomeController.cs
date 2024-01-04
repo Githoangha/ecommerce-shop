@@ -32,6 +32,32 @@ namespace Demo.Controllers
             var students =await _studentService.GetStudentsAsync();
             return View(students);
         }
+        public IActionResult CreateStudent()
+        {
+
+            return View();
+        }
+        public IActionResult UpdateStudent(Guid id)
+        {
+
+            return Ok(id);
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> Save(CreateStudentRequest request)
+        {
+            try
+            {
+                await _studentService.AddStudent(request);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[Home/Save]", ex);
+                return RedirectToAction("Error");
+            }
+            
+        }
         public IActionResult Privacy()
         {
             return View();

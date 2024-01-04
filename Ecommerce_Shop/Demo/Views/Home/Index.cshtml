@@ -9,7 +9,8 @@
     <h1 class="display-4">Welcome</h1>
     @foreach (var item in Model)
     {
-        <p>@item.Id - @item.Name - @item.Age</p>
+        <p>@item.Id - @item.Name - @item.Age <a href="/Home/UpdateStudent?id=@item.Id">Update</a></p>
+        
     }
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

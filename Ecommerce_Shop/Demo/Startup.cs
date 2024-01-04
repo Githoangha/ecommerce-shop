@@ -35,7 +35,7 @@ namespace Demo
             var assembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(assembly)));
-            services.AddScoped<IStudentService, StudentService>();
+            services.AddScoped<IStudentService, StudentService1>();
             services.AddScoped<IUnitOfWork, EfUnitOfWork>();
             services.AddScoped<IRepository, EfRepository>();
         }

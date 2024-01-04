@@ -1,9 +1,11 @@
 ﻿using Domain.Abstractrions;
 using Domain.entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Persistence
 {
@@ -18,9 +20,24 @@ namespace Persistence
         {
             _context.Students.Add(student);
         }
+
         public List<Student> FindAll()
         {
             return _context.Students.ToList();
+        }
+
+        public async  Task<List<Student>> FindAllAsync()
+        {
+            return await _context.Students.ToListAsync();
+        }
+
+        public void Update(Student student)
+        {
+            _context.Students.Update(student);
+        }
+        public async Task<Student> FindById(Guid Id)
+        {
+            return await _context.Students.FindAsync();
         }
     }
 }
