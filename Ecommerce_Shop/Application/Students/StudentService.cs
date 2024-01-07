@@ -16,6 +16,7 @@ namespace Application.Students
         Task<StudentViewModel> GetStudentsByIdAsync(Guid id);
         Task AddStudent(CreateStudentRequest request);
         Task UpdateStudent(UpdateStudentRequest request);
+        Task DeleteStudent(Guid Id);
         
     }
     #region bỏ
@@ -146,6 +147,17 @@ namespace Application.Students
             student.Name = request.Name;
             student.Age = request.Age;
             _Repository.Update(student);
+            await _UnitOfWork.SaveChangeAsync();
+        }
+
+        public async Task DeleteStudent(Guid Id)
+        {
+            var student = await _Repository.FindById(Id);
+            if (student == null)
+            {
+                throw new Exception("student not found");
+            }
+            _Repository.Delete(student);
             await _UnitOfWork.SaveChangeAsync();
         }
     }

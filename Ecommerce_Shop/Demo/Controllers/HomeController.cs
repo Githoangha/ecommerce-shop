@@ -14,7 +14,6 @@ namespace Demo.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentService _studentService;
-
         public HomeController(ILogger<HomeController> logger,IStudentService studentService)
         {
             _logger = logger;
@@ -32,19 +31,15 @@ namespace Demo.Controllers
             var students =await _studentService.GetStudentsAsync();
             return View(students);
         }
+
+        #region Add Student
         public IActionResult CreateStudent()
         {
-
             return View();
-        }
-        public IActionResult UpdateStudent(Guid id)
-        {
-
-            return Ok(id);
         }
         [ValidateAntiForgeryToken]
         [HttpPost]
-        public async Task<IActionResult> Save(CreateStudentRequest request)
+        public async Task<IActionResult> SaveCreate(CreateStudentRequest request)
         {
             try
             {
@@ -56,8 +51,74 @@ namespace Demo.Controllers
                 _logger.LogError("[Home/Save]", ex);
                 return RedirectToAction("Error");
             }
-            
+            finally
+            {
+
+            }
         }
+        #endregion
+
+        #region Update student
+        public async Task<IActionResult> UpdateStudent(Guid id)
+        {
+            try
+            {
+                var student = await _studentService.GetStudentsByIdAsync(id);
+                if (student != null)
+                {
+                    return View(student);
+                }
+                else
+                {
+                    return Error();
+                }
+
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("[Home/Save]", ex);
+                return RedirectToAction("Error");
+            }
+
+        }
+        [ValidateAntiForgeryToken]
+        [HttpPost]
+        public async Task<IActionResult> SaveUpdate(UpdateStudentRequest request)
+        {
+            try
+            {
+                await _studentService.UpdateStudent(request);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("[Home/Save]", ex);
+                return RedirectToAction("Error");
+            }
+            finally
+            {
+
+            }
+        }
+        #endregion
+
+        #region Delete Student
+
+        public async Task<IActionResult> DeleteStudent(Guid Id)
+        {
+            try
+            {
+                await _studentService.DeleteStudent(Id);
+                return RedirectToAction("Index");
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError("[Home/Save]", ex);
+                return RedirectToAction("Error");
+            }
+        }
+        #endregion
+
         public IActionResult Privacy()
         {
             return View();
