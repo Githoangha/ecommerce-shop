@@ -26,13 +26,19 @@ namespace Demo.Controllers
 
         //    return View(students);
         //}
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var students =await _studentService.GetStudentsAsync();
-            return View(students);
+            return View();
+        }
+
+        public async Task<IActionResult> StudentPartial([FromBody]Page model)
+        {
+            var students = await _studentService.GetStudentsAsync(model);
+            return PartialView(students);
         }
 
         #region Add Student
+        [HttpGet]
         public IActionResult CreateStudent()
         {
             return View();
@@ -59,6 +65,7 @@ namespace Demo.Controllers
         #endregion
 
         #region Update student
+        [HttpGet]
         public async Task<IActionResult> UpdateStudent(Guid id)
         {
             try

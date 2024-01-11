@@ -12,7 +12,7 @@ namespace Application.Students
     public interface IStudentService
     {
         List<StudentViewModel> GetStudents();
-        Task<List<StudentViewModel>> GetStudentsAsync();
+        Task<StudentData> GetStudentsAsync(Page model);
         Task<StudentViewModel> GetStudentsByIdAsync(Guid id);
         Task AddStudent(CreateStudentRequest request);
         Task UpdateStudent(UpdateStudentRequest request);
@@ -75,12 +75,14 @@ namespace Application.Students
     public class StudentService1:IStudentService
     {
         private readonly ApplicationDbContext _context;
-        private readonly IRepository _Repository;
+        private readonly IRepository1<Student,Guid> _studentRepository;
+        private readonly IRepository1<Major, Guid> _majorRepository;
         private readonly IUnitOfWork _UnitOfWork;
-        public StudentService1(IRepository repository, IUnitOfWork unitOfWork)
+        public StudentService1(IRepository1<Student, Guid> studentRepository,IRepository1<Major,Guid>majorRepository, IUnitOfWork unitOfWork)
         {
-            _Repository = repository;
+            _studentRepository = studentRepository;
             _UnitOfWork = unitOfWork;
+            _majorRepository = majorRepository;
         }
 
         public async Task AddStudent(CreateStudentRequest request)
@@ -91,13 +93,13 @@ namespace Application.Students
                 Name = request.Name,
                 Age = request.Age
             };
-            _Repository.Add(student);
+            _studentRepository.Add(student);
             await _UnitOfWork.SaveChangeAsync();
         }
 
         public async Task<StudentViewModel> GetStudentsByIdAsync(Guid id)
         {
-            var student = await _Repository.FindById(id);
+            var student = await _studentRepository.FindById(id);
             if (student == null)
             {
                 throw new Exception("student not found");
@@ -112,7 +114,7 @@ namespace Application.Students
 
         public List<StudentViewModel> GetStudents()
         {
-            var students = _Repository.FindAll();
+            var students = _studentRepository.FindAll();
             var result = students.Select(s => new StudentViewModel
             {
                 Id = s.Id,
@@ -123,22 +125,26 @@ namespace Application.Students
             return result;
         }
 
-        public async Task<List<StudentViewModel>> GetStudentsAsync()
+        public async Task<StudentData> GetStudentsAsync(Page model)
         {
-            var students = await _Repository.FindAllAsync();
-            var result =  students.Select(s => new StudentViewModel
+            var data = new StudentData();
+            var students = _studentRepository.FindAllAsync();
+            data.TotalStudent = students.Count();
+            students = students.OrderBy(s => s.Name).Skip(model.SkipNumber).Take(model.PageSize);
+            var result = await students.Select(s => new StudentViewModel
             {
                 Id = s.Id,
                 Name = s.Name,
                 Age = s.Age
-            }).ToList();
-            return result;
+            }).ToListAsync();
+            data.Students = result;
+            return data;
         }
 
         public async Task UpdateStudent(UpdateStudentRequest request)
         {
             //var student1 = (await _Repository.FindAllAsync()).FirstOrDefault(s => s.Id == request.Id);
-            var student = await _Repository.FindById(request.Id);
+            var student = await _studentRepository.FindById(request.Id);
             if (student == null)
             {
                 throw new Exception("student not found");
@@ -146,18 +152,18 @@ namespace Application.Students
 
             student.Name = request.Name;
             student.Age = request.Age;
-            _Repository.Update(student);
+            _studentRepository.Update(student);
             await _UnitOfWork.SaveChangeAsync();
         }
 
         public async Task DeleteStudent(Guid Id)
         {
-            var student = await _Repository.FindById(Id);
+            var student = await _studentRepository.FindById(Id);
             if (student == null)
             {
                 throw new Exception("student not found");
             }
-            _Repository.Delete(student);
+            _studentRepository.Delete(student);
             await _UnitOfWork.SaveChangeAsync();
         }
     }

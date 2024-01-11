@@ -31,13 +31,16 @@ namespace Demo
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
-            services.AddTransient<IServiceA, ServiceA>();
+            //services.AddTransient<IServiceA, ServiceA>();
             var assembly = typeof(ApplicationDbContext).Assembly.GetName().Name;
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly(assembly)));
             services.AddScoped<IStudentService, StudentService1>();
             services.AddScoped<IUnitOfWork, EfUnitOfWork>();
-            services.AddScoped<IRepository, EfRepository>();
+            //services.AddScoped<IRepository, EfRepository>();
+            services.AddScoped(typeof(IRepository1<,>), typeof(EfRepository1<,>));
+            //services.AddTransient(typeof(IRepository1<,>), typeof(EfRepository1<,>));
+            //services.AddScoped<IRepository1<,>, EfRepository1<,>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -64,7 +67,7 @@ namespace Demo
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Product}/{action=Index}/{id?}");
             });
             //app.Use(async (context, next) =>
             //{

@@ -1,17 +1,14 @@
 ﻿@*@model List<Application.Students.StudentViewModel>*@
-@using Application.Students;
-@model List<StudentViewModel>
+
 @{
     ViewData["Title"] = "Home Page";
 }
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <a href="/Home/CreateStudent">Create</a>
-    @foreach (var item in Model)
-    {
-        <p>@item.Id - @item.Name - @item.Age <a href="/Home/UpdateStudent?id=@item.Id">Update</a> <a href="/Home/DeleteStudent?id=@item.Id">Delete</a></p>
-
-    }
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@*<button id="btn-load">Load Student</button>
+<div id="cover"></div>*@
+<div id="table-content"></div>
+<div id="pagination"></div>
+@section Scripts{
+    @*<script src="~/js/demo.js"></script>*@
+    <script src="~/js/twb-pgination.js"></script>
+    <script src="~/js/student.js"></script>
+}

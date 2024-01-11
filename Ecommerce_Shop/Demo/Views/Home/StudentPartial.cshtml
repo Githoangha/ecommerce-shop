@@ -1,0 +1,18 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit http://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@using Application.Students;
+@model StudentData
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <a href="/Home/CreateStudent">Create</a>
+    @foreach (var item in Model.Students)
+    {
+        <div class="total-count" data-count="@Model.TotalStudent">
+            <p>@item.Id - @item.Name - @item.Age <a href="/Home/UpdateStudent?id=@item.Id">Update</a> <a href="/Home/DeleteStudent?id=@item.Id">Delete</a></p>
+        </div>
+
+    }
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
